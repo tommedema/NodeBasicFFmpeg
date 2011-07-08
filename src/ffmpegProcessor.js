@@ -52,7 +52,9 @@ var executeProcessor = function (processor) {
     
     //TODO: listen to process exit event
     
-    //TODO: start piping input stream to stdin
+    //start piping input stream to stdin and emit appropriate event
+    processor.options.inputStream.pipe(process.stdin);
+    processor.emit('start');
 };
 
 //terminates the given processor, which has options and state
