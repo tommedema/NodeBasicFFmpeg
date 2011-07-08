@@ -22,6 +22,7 @@ var processor =
       , arguments: { //the arguments passed, no syntatic sugar here (ffmpeg can be used just like its documentation says)
             '-ab': '128k'
           , '-acodec': 'libvorbis'
+          , '-f': 'ogg'
         }
     })
     .on('info', function (infoLine) {
