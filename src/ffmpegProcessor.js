@@ -62,7 +62,8 @@ var terminateProcessor = function (processor, signal) {
     //set default signal if signal is not set
     if (!signal) signal = 'SIGTERM';
     
-    //TODO: terminate piping process (end input stream?)
+    //end writable stream
+    processor.options.outputStream.destroy(); //not using end here, as we do not want to pipe any more data
     
     //check if processor is active, if not we are done already
     if (!processor.state.childProcess) {
