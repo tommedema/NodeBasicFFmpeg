@@ -1,3 +1,4 @@
+//references
 var spawn = require('child_process').spawn;
 
 //generates and returns the arguments fit for given processor to spawn ffmpeg with
@@ -46,6 +47,13 @@ var executeProcessor = function (processor) {
         exec('renice -n ' + processor.options.niceness + ' -p ' + process.pid);
     }
     
+    //set regular expressions for this processor
+    processor.regExps = {
+            line: /^([^\n]*\n)/
+          , audioCodec: /Audio: ([A-Za-z0-9]+),/ //Stream #0.0: Audio: mp3, 44100 Hz, stereo, s16, 186 kb/s
+          , progress: /size=\b*([0-9]+)kB/ //size=      52kB time=00:00:11.43 bitrate=  37.4kbits/s  
+    };
+    
     /* parse stdErr, emit appropriate events - parsing logic:
      * no need to store all stderr data in memory
      * instead, parse line by line
@@ -53,30 +61,41 @@ var executeProcessor = function (processor) {
      *      > inputAudioCodec
      *      > progress
      */
-    process.stderr.on('data', function (chunk) {        
-        //update temporary output for line checks
-        processor.state.tmpStderrOutput += chunk;
-        
-        //prepare parsing with regEx
-        var lineRegEx = /^([^\n]*\n)/,
-            results;
-        
-        //for each line
-        while (results = lineRegEx.exec(processor.state.tmpStderrOutput)) {
-            var line = results[1];
+    if (processor.options.fireInfoEvents || processor.state.informInputAudioCodec || processor.options.informProgress) {
+        process.stderr.on('data', function (chunk) {        
+            //update temporary output for line checks
+            processor.state.tmpStderrOutput += chunk;
             
-            //update tmp output
-            processor.state.tmpStderrOutput = processor.state.tmpStderrOutput.slice(line.length);
-            
-            //emit the info event for when clients wish to keep or output stderr feedback (per line)
-            if (processor.options.fireInfoEvents) processor.emit('info', line);
-            
-            //Stream #0.0: Audio: mp3, 44100 Hz, stereo, s16, 186 kb/s
-            if (processor.options.informInputAudioCodec) {
+            //for each line
+            var lineResults;
+            while (lineResults = processor.regExps.line.exec(processor.state.tmpStderrOutput)) {
+                var line = lineResults[1];
                 
+                //update tmp output
+                processor.state.tmpStderrOutput = processor.state.tmpStderrOutput.slice(line.length);
+                
+                //emit the info event for when clients wish to keep or output stderr feedback (per line)
+                if (processor.options.fireInfoEvents) processor.emit('info', line);
+                
+                //if we need to inform about input audio codec used
+                if (processor.state.informInputAudioCodec) {
+                    var audioResult = processor.regExps.audioCodec.exec(line);
+                    if (audioResult) {
+                        processor.emit('inputAudioCodec', audioResult[1]);
+                        processor.state.informInputAudioCodec = false; //only inform once
+                    }
+                }
+                
+                //if we need to inform about progress
+                if (processor.options.informProgress) {
+                    var progressResult = processor.regExps.progress.exec(line);
+                    if (progressResult) {
+                        processor.emit('progress', parseInt(progressResult[1]) * 1000);
+                    }
+                }
             }
-        }
-    });
+        });
+    }
     
     //listen to process exit event: end stdin and stdout if necessary
     process.on('exit', function(exitCode, signal) {
