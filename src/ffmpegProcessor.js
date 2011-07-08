@@ -36,9 +36,7 @@ var executeProcessor = function (processor) {
     process = spawn('ffmpeg', genProcArgs(processor), genProcOptions(processor));
     
     //set stderr encoding to make it parseable
-    if (process.stderr) {
-        process.stderr.setEncoding('utf8');
-    }
+    process.stderr.setEncoding('utf8');
     
     //update process state
     processor.state.childProcess = process;
@@ -48,7 +46,10 @@ var executeProcessor = function (processor) {
         exec('renice -n ' + processor.options.niceness + ' -p ' + process.pid);
     }
     
-    //TODO: parse stdErr, emit appropriate events
+    //parse stdErr, emit appropriate events
+    process.stderr.on('data', function (chunk) {
+        
+    });
     
     //TODO: listen to process exit event: end stdin and stdout if necessary
     
@@ -60,6 +61,8 @@ var executeProcessor = function (processor) {
 var terminateProcessor = function (processor, signal) {    
     //set default signal if signal is not set
     if (!signal) signal = 'SIGTERM';
+    
+    //TODO: terminate piping process (end input stream?)
     
     //check if processor is active, if not we are done already
     if (!processor.state.childProcess) return;
