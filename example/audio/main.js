@@ -1,7 +1,7 @@
 //NOTE: THIS EXAMPLE REQUIRES LIBVORBIS TO BE INSTALLED AND FFMPEG TO BE CONFIGURED WITH IT
 
 //references
-var ffmpeg = require('../../src/basicFFmpeg.js'),
+var ffmpeg = require('basicFFmpeg'),
     util = require('util'),
     fs = require('fs');
 
