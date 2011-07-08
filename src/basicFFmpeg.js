@@ -4,6 +4,8 @@ var util = require('util'),
 
 //creates a new processor object
 var createProcessor = function (options) {
+    //TODO: validate options such as niceness
+    
     //create new processor, starts as an event emitter
     var processor = new EventEmitter();
     
