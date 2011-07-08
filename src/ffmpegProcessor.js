@@ -66,7 +66,7 @@ var executeProcessor = function (processor) {
      *      > progress
      */
     if (processor.options.fireInfoEvents || processor.state.informInputAudioCodec || processor.options.informProgress) {
-        proc.stderr.on('data', function (chunk) {        
+        proc.stderr.on('data', function (chunk) {      
             //update temporary output for line checks
             processor.state.tmpStderrOutput += chunk;
             
@@ -87,6 +87,11 @@ var executeProcessor = function (processor) {
                     if (audioResult) {
                         processor.emit('inputAudioCodec', audioResult[1]);
                         processor.state.informInputAudioCodec = false; //only inform once
+                        
+                        //stop listening for stderr if we can
+                        if (!processor.state.fireInfoEvents && !processor.options.informProgress) {
+                            proc.stderr.removeAllListeners('data');
+                        }
                     }
                 }
                 
