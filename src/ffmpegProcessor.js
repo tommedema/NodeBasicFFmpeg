@@ -2,12 +2,12 @@ var spawn = require('child_process').spawn;
 
 //generates and returns the arguments fit for given processor to spawn ffmpeg with
 var genProcArgs = function (processor) {
-    //TODO
+    //TODO: genProcArgs
 };
 
 //generates and returns the options fit for given processor to spawn ffmpeg with
 var genProcOptions = function (processor) {
-    //TODO
+    //TODO: genProcOptions
 };
 
 //executes the given processor, which has options and state
@@ -39,14 +39,14 @@ var executeProcessor = function (processor) {
         exec('renice -n ' + processor.options.niceness + ' -p ' + process.pid);
     }
     
-    //parse stdErr, emit appropriate events
+    //TODO: parse stdErr, emit appropriate events
     
     //pipe stdOut to outputStream
 };
 
 //terminates the given processor, which has options and state
 var terminateProcessor = function (processor, signal) {
-    //TODO
+    //TODO: implement termination
     
     //set default signal if signal is not set
     
