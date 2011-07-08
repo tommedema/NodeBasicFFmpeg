@@ -52,15 +52,12 @@ var executeProcessor = function (processor) {
     
     //TODO: listen to process exit event
     
-    //start piping input stream to stdin and emit appropriate event
+    //start piping input stream to stdin
     processor.options.inputStream.pipe(process.stdin);
-    processor.emit('start');
 };
 
 //terminates the given processor, which has options and state
-var terminateProcessor = function (processor, signal) {
-    //TODO: implement termination
-    
+var terminateProcessor = function (processor, signal) {    
     //set default signal if signal is not set
     
     //check if processor is active

@@ -24,9 +24,6 @@ Full usage example (convert input stream to libvorbis codec and pipe to output s
               , '-acodec': 'libvorbis'
             }
         })
-        .on('start', function() {
-            util.debug('processor started conversion from input to output stream');
-        })
         .on('inputAudioCodec', function (codec) {
             util.debug('input audio codec is: ' + codec);
         })
