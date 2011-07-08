@@ -8,7 +8,8 @@ var genProcArgs = function (processor) {
     if (processor.options.arguments) { //add additional arguments
         for (var argument in processor.options.arguments) {
             if (processor.options.arguments.hasOwnProperty(argument)) {
-                args.push(argument, processor.options.arguments[argument]);
+                args.push(argument);
+                if (processor.options.arguments[argument]) args.push(processor.options.arguments[argument]);
             }
         }
     }
