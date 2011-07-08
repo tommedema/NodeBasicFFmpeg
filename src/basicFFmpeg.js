@@ -20,8 +20,8 @@ var createProcessor = function (options) {
     processor.execute = function() {
         ffmpegProcessor.execute(processor);
     };
-    processor.terminate = function() {
-        ffmpegProcessor.terminate(processor);
+    processor.terminate = function(signal) { //signal is optional
+        ffmpegProcessor.terminate(processor, signal);
     };
     
     //return this processor
