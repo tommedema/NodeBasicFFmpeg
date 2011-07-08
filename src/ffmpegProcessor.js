@@ -19,13 +19,18 @@ var genProcArgs = function (processor) {
 
 //generates and returns the options fit for given processor to spawn ffmpeg with
 var genProcOptions = function (processor) {
+    var util = require('util');
+    util.debug('genProcOptions outputStream: ' + util.inspect(processor.options.outputStream));
+    if (!processor.options.outputStream.fd) {
+        util.debug('ERROR: OUTPUTSTREAM FD IS NULL');
+    }
     return  {
                 customFds: [-1, processor.options.outputStream.fd, -1] //we pipe our input stream to stdin, so that ffmpeg will write to our output stream while we control the piping process
             };
 };
 
 //executes the given processor, which has options and state
-var executeProcessor = function (processor) {
+var executeProcessor = function (processor) {    
     //check if processor is not already active
     if (processor.state.childProcess) throw 'processor.execute called while processor has already been executed';
     
@@ -38,6 +43,8 @@ var executeProcessor = function (processor) {
     }
     
     //create new child process with given inputStream and outputStream
+    var util = require('util');
+    util.debug('exec processor outputStream 2: ' + processor.options.outputStream);
     var proc = spawn('ffmpeg', genProcArgs(processor), genProcOptions(processor));
     
     //set stderr encoding to make it parseable
@@ -116,6 +123,12 @@ var executeProcessor = function (processor) {
         if (processor.options.fireInfoEvents) processor.emit('info', processor.state.tmpStderrOutput);
         processor.state.tmpStderrOutput = '';
         
+        //end input stream if applicable
+        if (processor.options.inputStream.readable) processor.options.inputStream.destroy();
+        
+        //end output stream if applicable
+        if (processor.options.outputStream.writable) processor.options.outputStream.destroy();
+        
         //failure if exitCode is not 0 or signal is set
         if (exitCode !== 0 || signal) {
             processor.emit('failure', exitCode, signal);
@@ -140,8 +153,11 @@ var terminateProcessor = function (processor, signal) {
     //clear timeout timer
     if (processor.state.timeoutTimer) clearTimeout(processor.state.timeoutTimer);
     
-    //end writable stream
-    processor.options.outputStream.destroy(); //not using end here, as we do not want to pipe any more data
+    //end input stream if applicable
+    if (processor.options.inputStream.readable) processor.options.inputStream.destroy();
+    
+    //end output stream if applicable
+    if (processor.options.outputStream.writable) processor.options.outputStream.destroy();
     
     //handle leftover output
     if (processor.options.fireInfoEvents) processor.emit('info', processor.state.tmpStderrOutput);
@@ -162,3 +178,5 @@ var terminateProcessor = function (processor, signal) {
 //public methods
 exports.execute = executeProcessor;
 exports.terminate = terminateProcessor;
+
+//TODO: add endOutputStream and endInputStream flags, but first consider when these should be closed
