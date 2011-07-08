@@ -48,7 +48,7 @@ var executeProcessor = function (processor) {
     
     //parse stdErr, emit appropriate events
     process.stderr.on('data', function (chunk) {
-        
+        //TODO
     });
     
     //TODO: listen to process exit event: end stdin and stdout if necessary
