@@ -48,10 +48,25 @@ var executeProcessor = function (processor) {
     
     //parse stdErr, emit appropriate events
     process.stderr.on('data', function (chunk) {
-        //TODO
+        //emit the info event for when clients wish to keep or output stderr feedback
+        processor.emit('info', chunk);
+        
+        /* parsing logic:
+         * no need to store all stderr data in memory
+         * instead, parse line by line
+         * perform regular expressions on each line to fire following events:
+         *      inputAudioCodec
+         *      progress
+         */
     });
     
-    //TODO: listen to process exit event: end stdin and stdout if necessary
+    //listen to process exit event: end stdin and stdout if necessary
+    process.on('exit', function(exitCode, signal) {
+        //clear timeout timer if applicable
+        if (processor.state.timeoutTimer) clearTimeout(processor.state.timeoutTimer);
+        
+        //TODO: emit: success/failure
+    });
     
     //start piping input stream to stdin
     processor.options.inputStream.pipe(process.stdin);
@@ -61,6 +76,9 @@ var executeProcessor = function (processor) {
 var terminateProcessor = function (processor, signal) {    
     //set default signal if signal is not set
     if (!signal) signal = 'SIGTERM';
+    
+    //clear timeout timer
+    if (processor.state.timeoutTimer) clearTimeout(processor.state.timeoutTimer);
     
     //end writable stream
     processor.options.outputStream.destroy(); //not using end here, as we do not want to pipe any more data
