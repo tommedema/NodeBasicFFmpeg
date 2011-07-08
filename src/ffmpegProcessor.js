@@ -106,7 +106,13 @@ var executeProcessor = function (processor) {
         if (processor.options.fireInfoEvents) processor.emit('info', processor.state.tmpStderrOutput);
         processor.state.tmpStderrOutput = '';
         
-        //TODO: emit: success/failure
+        //failure if exitCode is null or signal is set
+        if (!exitCode || signal) {
+            processor.emit('failure', exitCode, signal);
+        }
+        else { //normal termination equals success
+            processor.emit('success', exitCode, signal);
+        }
     });
     
     //start piping input stream to stdin

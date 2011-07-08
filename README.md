@@ -33,10 +33,10 @@ Full usage example (convert input stream to libvorbis codec and pipe to output s
         .on('inputAudioCodec', function (codec) {
             util.debug('input audio codec is: ' + codec);
         })
-        .on('success', function (retcode) {
+        .on('success', function (retcode, signal) {
             util.debug('process finished with retcode: ' + retcode);
         })
-        .on('failure', function (retcode, err) {
+        .on('failure', function (retcode, signal) {
             util.debug('the following error occured: ' + err);
         })
         .on('progress', function (bytes) {
