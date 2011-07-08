@@ -50,7 +50,7 @@ var executeProcessor = function (processor) {
     
     //TODO: parse stdErr, emit appropriate events
     
-    //TODO: listen to process exit event
+    //TODO: listen to process exit event: end stdin and stdout if necessary
     
     //start piping input stream to stdin
     processor.options.inputStream.pipe(process.stdin);
@@ -59,10 +59,13 @@ var executeProcessor = function (processor) {
 //terminates the given processor, which has options and state
 var terminateProcessor = function (processor, signal) {    
     //set default signal if signal is not set
+    if (!signal) signal = 'SIGTERM';
     
-    //check if processor is active
+    //check if processor is active, if not we are done already
+    if (!processor.state.childProcess) return;
     
     //terminate with default signal or custom signal if set
+    processor.state.childProcess.kill(signal);
 };
 
 //public methods
