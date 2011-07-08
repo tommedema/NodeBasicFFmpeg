@@ -107,8 +107,8 @@ var executeProcessor = function (processor) {
         if (processor.options.fireInfoEvents) processor.emit('info', processor.state.tmpStderrOutput);
         processor.state.tmpStderrOutput = '';
         
-        //failure if exitCode is null or signal is set
-        if (!exitCode || signal) {
+        //failure if exitCode is not 0 or signal is set
+        if (exitCode !== 0 || signal) {
             processor.emit('failure', exitCode, signal);
         }
         else { //normal termination equals success
