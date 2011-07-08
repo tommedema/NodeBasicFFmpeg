@@ -38,14 +38,12 @@ var executeProcessor = function (processor) {
     }
     
     //create new child process with given inputStream and outputStream
-    var util = require('util');
-    util.debug('exec processor outputStream 2: ' + processor.options.outputStream);
     var proc = spawn('ffmpeg', genProcArgs(processor), genProcOptions(processor));
     
     //set stderr encoding to make it parseable
     proc.stderr.setEncoding('utf8');
     
-    //update process state
+    //update child process state
     processor.state.childProcess = proc;
     
     //renice child process if applicable, fails silently if things go wrong
@@ -63,11 +61,12 @@ var executeProcessor = function (processor) {
     /* parse stdErr, emit appropriate events - parsing logic:
      * no need to store all stderr data in memory
      * instead, parse line by line
-     * perform regular expressions on each line to fire following events:
+     * perform regular expressions on each line to emit the following events:
      *      > inputAudioCodec
      *      > progress
+     *      > info
      */
-    if (processor.options.fireInfoEvents || processor.state.informInputAudioCodec || processor.options.informProgress) {
+    if (processor.options.emitInfoEvent || processor.state.emitInputAudioCodecEvent || processor.options.emitProgressEvent) {
         proc.stderr.on('data', function (chunk) {      
             //update temporary output for line checks
             processor.state.tmpStderrOutput += chunk;
@@ -81,17 +80,17 @@ var executeProcessor = function (processor) {
                 processor.state.tmpStderrOutput = processor.state.tmpStderrOutput.slice(line.length);
                 
                 //emit the info event for when clients wish to keep or output stderr feedback (per line)
-                if (processor.options.fireInfoEvents) processor.emit('info', line);
+                if (processor.options.emitInfoEvent) processor.emit('info', line);
                 
                 //if we need to inform about input audio codec used
-                if (processor.state.informInputAudioCodec) {
+                if (processor.state.emitInputAudioCodecEvent) {
                     var audioResult = processor.regExps.audioCodec.exec(line);
                     if (audioResult) {
                         processor.emit('inputAudioCodec', audioResult[1]);
-                        processor.state.informInputAudioCodec = false; //only inform once
+                        processor.state.emitInputAudioCodecEvent = false; //only inform once
                         
                         //stop listening for stderr if we can
-                        if (!processor.state.fireInfoEvents && !processor.options.informProgress) {
+                        if (!processor.state.emitInfoEvent && !processor.options.emitProgressEvent) {
                             proc.stderr.removeAllListeners('data');
                             processor.state.tmpStderrOutput = '';
                         }
@@ -99,7 +98,7 @@ var executeProcessor = function (processor) {
                 }
                 
                 //if we need to inform about progress
-                if (processor.options.informProgress) {
+                if (processor.options.emitProgressEvent) {
                     var progressResult = processor.regExps.progress.exec(line);
                     if (progressResult) {
                         processor.emit('progress', parseInt(progressResult[1]) * 1000);
@@ -115,7 +114,7 @@ var executeProcessor = function (processor) {
         if (processor.state.timeoutTimer) clearTimeout(processor.state.timeoutTimer);
         
         //handle leftover output
-        if (processor.options.fireInfoEvents) processor.emit('info', processor.state.tmpStderrOutput);
+        if (processor.options.emitInfoEvent) processor.emit('info', processor.state.tmpStderrOutput);
         processor.state.tmpStderrOutput = '';
         
         //end input stream if applicable
@@ -158,7 +157,7 @@ var terminateProcessor = function (processor, signal) {
     if (processor.options.outputStream.writable) processor.options.outputStream.destroy();
     
     //handle leftover output
-    if (processor.options.fireInfoEvents) processor.emit('info', processor.state.tmpStderrOutput);
+    if (processor.options.emitInfoEvent) processor.emit('info', processor.state.tmpStderrOutput);
     processor.state.tmpStderrOutput = '';
     
     //check if processor is active, if not we are done already

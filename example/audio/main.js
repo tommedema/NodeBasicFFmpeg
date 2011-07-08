@@ -38,9 +38,9 @@ var processor =
     ffmpeg.createProcessor({
         inputStream: inputStream //read from readable stream
       , outputStream: outputStream //write to writable stream
-      , informInputAudioCodec: true //inputAudioCodec event will not be fired if this is not set to true
-      , fireInfoEvents: true //info events will not be fired if this is not set to true
-      , informProgress: true //progress events will not be fired if this is not set to true
+      , emitInputAudioCodecEvent: true //inputAudioCodec event will not be fired if this is not set to true
+      , emitInfoEvent: true //info events will not be fired if this is not set to true
+      , emitProgressEvent: true //progress events will not be fired if this is not set to true
       , niceness: 10 //set child process niceness to 10
       , timeout: 10 * 60 * 1000 //fire timeout event after 10 minutes, does not actually stop process
       , arguments: { //the arguments passed, no syntatic sugar here (ffmpeg can be used just like its documentation says)

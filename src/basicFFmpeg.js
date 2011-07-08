@@ -21,7 +21,7 @@ var createProcessor = function (options) {
             timeoutTimer: null
           , childProcess: null
           , tmpStderrOutput: ''
-          , informInputAudioCodec: options.informInputAudioCodec
+          , emitInputAudioCodecEvent: options.emitInputAudioCodecEvent
     };
     
     //add execution and termination methods
