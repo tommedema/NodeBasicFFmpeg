@@ -1,4 +1,5 @@
 .*
 org.eclipse.*
-output**Song**
+**.ogg
+**.mp3
 !.gitignore
