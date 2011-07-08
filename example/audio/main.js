@@ -1,15 +1,39 @@
 //NOTE: THIS EXAMPLE REQUIRES LIBVORBIS TO BE INSTALLED AND FFMPEG TO BE CONFIGURED WITH IT
 
+//references
 var ffmpeg = require('../../src/basicFFmpeg.js'),
     util = require('util'),
     fs = require('fs');
 
 //create input stream
-var inputStream = fs.createReadStream('../../assets/inputSong.mp3');
+var inputStream = 
+    fs.createReadStream('../../assets/inputSong.mp3')
+    .on('end', function () {
+        util.debug('input stream end');
+    })
+    .on('error', function (exception) {
+        util.debug('input stream exception: ' + exception);
+    })
+    .on('close', function () {
+        util.debug('input stream close');
+    });
+util.debug('created input stream: ' + util.inspect(inputStream));
 
 //create output stream
-var outputStream = fs.createWriteStream('./outputSong.ogg');
+var outputStream = 
+    fs.createWriteStream('./outputSong.ogg')
+    .on('error', function (exception) {
+        util.debug('output stream error: ' + exception);
+    })
+    .on('close', function () {
+        util.debug('output stream close');
+    })
+    .on('pipe', function() {
+        util.debug('a readable stream is now piping to output stream');
+    });
+util.debug('created output stream: ' + util.inspect(outputStream));
 
+//create a new processor with options, listen for events and execute
 var processor = 
     ffmpeg.createProcessor({
         inputStream: inputStream //read from readable stream
