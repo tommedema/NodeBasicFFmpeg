@@ -17,7 +17,6 @@ var inputStream =
     .on('close', function () {
         util.debug('input stream close');
     });
-util.debug('created input stream: ' + util.inspect(inputStream));
 
 //create output stream
 var outputStream = 
@@ -31,7 +30,6 @@ var outputStream =
     .on('pipe', function() {
         util.debug('a readable stream is now piping to output stream');
     });
-util.debug('created output stream: ' + util.inspect(outputStream));
 
 //create a new processor with options, listen for events and execute
 var processor = 
