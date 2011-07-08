@@ -24,8 +24,8 @@ var processor =
           , '-acodec': 'libvorbis'
         }
     })
-    .on('info', function (infoChunk) {
-        util.debug('some info has been written to stderr: ' + infoChunk);
+    .on('info', function (infoLine) {
+        util.debug('some info has been written to stderr: ' + infoLine);
     })
     .on('inputAudioCodec', function (codec) {
         util.debug('input audio codec is: ' + codec);

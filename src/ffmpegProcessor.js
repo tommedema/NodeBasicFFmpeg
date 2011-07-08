@@ -99,7 +99,7 @@ var executeProcessor = function (processor) {
     }
     
     //listen to process exit event: end stdin and stdout if necessary
-    process.on('exit', function(exitCode, signal) {
+    process.on('exit', function(exitCode, signal) {        
         //clear timeout timer if applicable
         if (processor.state.timeoutTimer) clearTimeout(processor.state.timeoutTimer);
         
