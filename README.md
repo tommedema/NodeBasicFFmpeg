@@ -10,7 +10,7 @@ Much of this code comes from node-fluent-ffmpeg, created by Schaermu (https://gi
 Full usage example (convert input stream to libvorbis codec and pipe to output stream, set niceness and timeout, inform input audio codec and listen to events). 
 ------------------
 
-    var ffmpeg = require('basic-ffmpeg'),
+    var ffmpeg = require('basicFFmpeg'),
         util = require('util');
         
     var processor = 
