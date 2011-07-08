@@ -1,5 +1,6 @@
 //references
-var spawn = require('child_process').spawn;
+var spawn = require('child_process').spawn,
+    exec = require('child_process').exec;
 
 //generates and returns the arguments fit for given processor to spawn ffmpeg with
 var genProcArgs = function (processor) {
