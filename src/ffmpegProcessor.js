@@ -1,3 +1,15 @@
+var spawn = require('child_process').spawn;
+
+//generates and returns the arguments fit for given processor to spawn ffmpeg with
+var genProcArgs = function (processor) {
+    //TODO
+};
+
+//generates and returns the options fit for given processor to spawn ffmpeg with
+var genProcOptions = function (processor) {
+    //TODO
+};
+
 //executes the given processor, which has options and state
 var executeProcessor = function (processor) {
     //check if processor is not already active
@@ -11,9 +23,21 @@ var executeProcessor = function (processor) {
         }, processor.options.timeout);
     }
     
-    //create new child process with given inputStream and outputStream, set encodings, update state
+    //create new child process with given inputStream and outputStream
+    process = spawn('ffmpeg', genProcArgs(processor), genProcOptions(processor));
     
-    //renice child process
+    //set stderr encoding to make it parseable
+    if (process.stderr) {
+        process.stderr.setEncoding('utf8');
+    }
+    
+    //update process state
+    processor.state.childProcess = process;
+    
+    //renice child process if applicable, fails silently if things go wrong
+    if (processor.options.niceness) {
+        exec('renice -n ' + processor.options.niceness + ' -p ' + process.pid);
+    }
     
     //parse stdErr, emit appropriate events
     
@@ -22,6 +46,8 @@ var executeProcessor = function (processor) {
 
 //terminates the given processor, which has options and state
 var terminateProcessor = function (processor, signal) {
+    //TODO
+    
     //set default signal if signal is not set
     
     //check if processor is active
