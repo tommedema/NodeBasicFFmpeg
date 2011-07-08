@@ -64,6 +64,6 @@ var processor =
     })
     .on('timeout', function (processor) {
         util.debug('timeout event fired, stopping process.');
-        processor.terminate();
+        processor.terminate(); //note that this will still cause 'failure' to emit, since the process was not successful
     })
     .execute();
