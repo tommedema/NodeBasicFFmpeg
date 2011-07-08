@@ -46,25 +46,46 @@ var executeProcessor = function (processor) {
         exec('renice -n ' + processor.options.niceness + ' -p ' + process.pid);
     }
     
-    //parse stdErr, emit appropriate events
-    process.stderr.on('data', function (chunk) {
-        //emit the info event for when clients wish to keep or output stderr feedback
-        processor.emit('info', chunk);
+    /* parse stdErr, emit appropriate events - parsing logic:
+     * no need to store all stderr data in memory
+     * instead, parse line by line
+     * perform regular expressions on each line to fire following events:
+     *      > inputAudioCodec
+     *      > progress
+     */
+    process.stderr.on('data', function (chunk) {        
+        //update temporary output for line checks
+        processor.state.tmpStderrOutput += chunk;
         
-        /* parsing logic:
-         * no need to store all stderr data in memory
-         * instead, parse line by line
-         * perform regular expressions on each line to fire following events:
-         *      inputAudioCodec
-         *      progress
-         */
-        //TODO: implement parsing logic
+        //prepare parsing with regEx
+        var lineRegEx = /^([^\n]*\n)/,
+            results;
+        
+        //for each line
+        while (results = lineRegEx.exec(processor.state.tmpStderrOutput)) {
+            var line = results[1];
+            
+            //update tmp output
+            processor.state.tmpStderrOutput = processor.state.tmpStderrOutput.slice(line.length);
+            
+            //emit the info event for when clients wish to keep or output stderr feedback (per line)
+            if (processor.options.fireInfoEvents) processor.emit('info', line);
+            
+            //Stream #0.0: Audio: mp3, 44100 Hz, stereo, s16, 186 kb/s
+            if (processor.options.informInputAudioCodec) {
+                
+            }
+        }
     });
     
     //listen to process exit event: end stdin and stdout if necessary
     process.on('exit', function(exitCode, signal) {
         //clear timeout timer if applicable
         if (processor.state.timeoutTimer) clearTimeout(processor.state.timeoutTimer);
+        
+        //handle leftover output
+        if (processor.options.fireInfoEvents) processor.emit('info', processor.state.tmpStderrOutput);
+        processor.state.tmpStderrOutput = '';
         
         //TODO: emit: success/failure
     });
@@ -83,6 +104,10 @@ var terminateProcessor = function (processor, signal) {
     
     //end writable stream
     processor.options.outputStream.destroy(); //not using end here, as we do not want to pipe any more data
+    
+    //handle leftover output
+    if (processor.options.fireInfoEvents) processor.emit('info', processor.state.tmpStderrOutput);
+    processor.state.tmpStderrOutput = '';
     
     //check if processor is active, if not we are done already
     if (!processor.state.childProcess) {

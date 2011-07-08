@@ -20,6 +20,7 @@ var createProcessor = function (options) {
     processor.state = {
             timeoutTimer: null
           , childProcess: null
+          , tmpStderrOutput: ''
     };
     
     //add execution and termination methods
