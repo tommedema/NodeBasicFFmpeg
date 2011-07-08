@@ -35,17 +35,17 @@ var executeProcessor = function (processor) {
     }
     
     //create new child process with given inputStream and outputStream
-    process = spawn('ffmpeg', genProcArgs(processor), genProcOptions(processor));
+    var proc = spawn('ffmpeg', genProcArgs(processor), genProcOptions(processor));
     
     //set stderr encoding to make it parseable
-    process.stderr.setEncoding('utf8');
+    proc.stderr.setEncoding('utf8');
     
     //update process state
-    processor.state.childProcess = process;
+    processor.state.childProcess = proc;
     
     //renice child process if applicable, fails silently if things go wrong
     if (processor.options.niceness) {
-        //TODO: FIXME: exec('renice -n ' + processor.options.niceness + ' -p ' + process.pid);
+        exec('renice -n ' + processor.options.niceness + ' -p ' + proc.pid);
     }
     
     //set regular expressions for this processor
@@ -63,7 +63,7 @@ var executeProcessor = function (processor) {
      *      > progress
      */
     if (processor.options.fireInfoEvents || processor.state.informInputAudioCodec || processor.options.informProgress) {
-        process.stderr.on('data', function (chunk) {        
+        proc.stderr.on('data', function (chunk) {        
             //update temporary output for line checks
             processor.state.tmpStderrOutput += chunk;
             
@@ -99,7 +99,7 @@ var executeProcessor = function (processor) {
     }
     
     //listen to process exit event: end stdin and stdout if necessary
-    process.on('exit', function(exitCode, signal) {        
+    proc.on('exit', function(exitCode, signal) {        
         //clear timeout timer if applicable
         if (processor.state.timeoutTimer) clearTimeout(processor.state.timeoutTimer);
         
@@ -117,7 +117,7 @@ var executeProcessor = function (processor) {
     });
     
     //start piping input stream to stdin
-    processor.options.inputStream.pipe(process.stdin);
+    processor.options.inputStream.pipe(proc.stdin);
     
     //return processor to allow chaining
     return processor;
