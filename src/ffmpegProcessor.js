@@ -12,6 +12,7 @@ var genProcArgs = function (processor) {
             }
         }
     }
+    return args;
 };
 
 //generates and returns the options fit for given processor to spawn ffmpeg with
