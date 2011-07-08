@@ -4,7 +4,11 @@ var util = require('util'),
 
 //creates a new processor object
 var createProcessor = function (options) {
-    //TODO: validate options such as niceness, make sure that required options are set
+    //validate options such as niceness, make sure that required options are set
+    if (!options.inputStream) throw 'input stream is not set';
+    if (!options.outputStream) throw 'output stream is not set';
+    if (options.niceness && (options.niceness < -20 || options.niceness > 19)) throw 'niceness cannot be lower than -20 or higher than 19';
+    if (!options.arguments) options.arguments = {};
     
     //create new processor, starts as an event emitter
     var processor = new EventEmitter();
