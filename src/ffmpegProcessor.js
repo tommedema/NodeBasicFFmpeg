@@ -4,7 +4,7 @@ var executeProcessor = function (processor) {
     
     //set timeout
     
-    //create new child process with given inputStream and outputStream, update state
+    //create new child process with given inputStream and outputStream, set encodings, update state
     
     //renice child process
     
