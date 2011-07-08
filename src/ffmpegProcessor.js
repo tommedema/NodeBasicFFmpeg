@@ -118,10 +118,10 @@ var executeProcessor = function (processor) {
         processor.state.tmpStderrOutput = '';
         
         //end input stream if applicable
-        if (processor.options.inputStream.readable) processor.options.inputStream.destroy();
+        if (processor.options.endInputStream && processor.options.inputStream.readable) processor.options.inputStream.destroy();
         
         //end output stream if applicable
-        if (processor.options.outputStream.writable) processor.options.outputStream.destroy();
+        if (processor.options.endOutputStream && processor.options.outputStream.writable) processor.options.outputStream.destroy();
         
         //failure if exitCode is not 0 or signal is set
         if (exitCode !== 0 || signal) {
@@ -151,10 +151,10 @@ var terminateProcessor = function (processor, signal) {
     if (processor.state.timeoutTimer) clearTimeout(processor.state.timeoutTimer);
     
     //end input stream if applicable
-    if (processor.options.inputStream.readable) processor.options.inputStream.destroy();
+    if (processor.options.endInputStream && processor.options.inputStream.readable) processor.options.inputStream.destroy();
     
     //end output stream if applicable
-    if (processor.options.outputStream.writable) processor.options.outputStream.destroy();
+    if (processor.options.endOutputStream && processor.options.outputStream.writable) processor.options.outputStream.destroy();
     
     //handle leftover output
     if (processor.options.emitInfoEvent) processor.emit('info', processor.state.tmpStderrOutput);
@@ -176,5 +176,4 @@ var terminateProcessor = function (processor, signal) {
 exports.execute = executeProcessor;
 exports.terminate = terminateProcessor;
 
-//TODO: add endOutputStream and endInputStream flags, but first consider when these should be closed
 //TODO: fix progress feedback

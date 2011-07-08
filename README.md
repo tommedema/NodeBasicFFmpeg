@@ -49,4 +49,4 @@ Full usage example (convert input stream to libvorbis codec and pipe to output s
         })
         .execute();
         
- __Note:__ you need to properly end the input stream yourself when terminating the process if you wish for it to end. The library cannot do this as it does not know whether you want to use the input stream for any other purposes.
+ __Note:__ both input and output stream will be destroyed when the process terminates, fails or succeeds unless you set endInputStream and/or endOutputStream to false, respectively.

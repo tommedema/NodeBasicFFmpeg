@@ -9,6 +9,8 @@ var createProcessor = function (options) {
     if (!options.outputStream) throw 'output stream is not set';
     if (options.niceness && (options.niceness < -20 || options.niceness > 19)) throw 'niceness cannot be lower than -20 or higher than 19';
     if (!options.arguments) options.arguments = {};
+    if (!options.endInputStream) options.endInputStream = true;
+    if (!options.endOutputStream) options.endOutputStream = true;
     
     //create new processor, starts as an event emitter
     var processor = new EventEmitter();
