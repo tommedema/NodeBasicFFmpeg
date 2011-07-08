@@ -16,7 +16,7 @@ var genProcArgs = function (processor) {
 //generates and returns the options fit for given processor to spawn ffmpeg with
 var genProcOptions = function (processor) {
     return  {
-                customFds: [-1, processor.outputStream.fd, -1] //we pipe our input stream to stdin, so that ffmpeg will write to our output stream while we control the piping process
+                customFds: [-1, processor.options.outputStream.fd, -1] //we pipe our input stream to stdin, so that ffmpeg will write to our output stream while we control the piping process
             };
 };
 
