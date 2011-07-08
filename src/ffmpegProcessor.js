@@ -178,3 +178,4 @@ exports.execute = executeProcessor;
 exports.terminate = terminateProcessor;
 
 //TODO: add endOutputStream and endInputStream flags, but first consider when these should be closed
+//TODO: fix progress feedback
