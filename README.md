@@ -5,6 +5,8 @@ Basic FFmpeg wrapper __for Linux__, see examples. For now, mostly limited to Aud
 
 All input should be passed using a readable stream (input stream).
 
+Much of this code comes from node-fluent-ffmpeg, created by Schaermu (https://github.com/schaermu/node-fluent-ffmpeg).
+
 Full usage example (convert input stream to libvorbis codec and pipe to output stream, set niceness and timeout, inform input audio codec and listen to events). 
 ------------------
 
