@@ -91,6 +91,7 @@ var executeProcessor = function (processor) {
                         //stop listening for stderr if we can
                         if (!processor.state.fireInfoEvents && !processor.options.informProgress) {
                             proc.stderr.removeAllListeners('data');
+                            processor.state.tmpStderrOutput = '';
                         }
                     }
                 }
