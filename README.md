@@ -19,6 +19,10 @@ Full usage example (convert input stream to libvorbis codec and pipe to output s
           , outputStream: outputStream //write to writable stream
           , niceness: 10 //set child process niceness to 10
           , timeout: 10 * 60 * 1000 //fire timeout event after 10 minutes, does not actually stop process
+          , arguments: { //the arguments passed, no syntatic sugar here (ffmpeg can be used just like its documentation says)
+                '-ab': '128k'
+              , '-acodec': 'libvorbis'
+            }
         })
         .on('inputAudioCodec', function (codec) {
             util.debug('input audio codec is: ' + codec);
