@@ -25,16 +25,16 @@ var processor =
         }
     })
     .on('info', function (infoLine) {
-        util.debug('some info has been written to stderr: ' + infoLine);
+        util.log(infoLine);
     })
     .on('inputAudioCodec', function (codec) {
         util.debug('input audio codec is: ' + codec);
     })
     .on('success', function (retcode, signal) {
-        util.debug('process finished successfully with retcode: ' + retcode);
+        util.debug('process finished successfully with retcode: ' + retcode + ', signal: ' + signal);
     })
     .on('failure', function (retcode, signal) {
-        util.debug('the following error occured: ' + err);
+        util.debug('process failure, retcode: ' + retcode + ', signal: ' + signal);
     })
     .on('progress', function (bytes) {
         util.debug('process event, bytes: ' + bytes);

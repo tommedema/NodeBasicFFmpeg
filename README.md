@@ -27,17 +27,17 @@ Full usage example (convert input stream to libvorbis codec and pipe to output s
               , '-acodec': 'libvorbis'
             }
         })
-        .on('info', function (infoChunk) {
-            util.debug('some info has been written to stderr: ' + infoChunk);
+        .on('info', function (infoLine) {
+            util.log(infoLine);
         })
         .on('inputAudioCodec', function (codec) {
             util.debug('input audio codec is: ' + codec);
         })
         .on('success', function (retcode, signal) {
-            util.debug('process finished with retcode: ' + retcode);
+            util.debug('process finished successfully with retcode: ' + retcode + ', signal: ' + signal);
         })
         .on('failure', function (retcode, signal) {
-            util.debug('the following error occured: ' + err);
+            util.debug('process failure, retcode: ' + retcode + ', signal: ' + signal);
         })
         .on('progress', function (bytes) {
             util.debug('process event, bytes: ' + bytes);
