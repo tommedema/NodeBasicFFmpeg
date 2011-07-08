@@ -41,7 +41,7 @@ var executeProcessor = function (processor) {
     
     //TODO: parse stdErr, emit appropriate events
     
-    //pipe stdOut to outputStream
+    //TODO: listen to process exit event
 };
 
 //terminates the given processor, which has options and state
