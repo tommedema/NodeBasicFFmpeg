@@ -45,14 +45,14 @@ var executeProcessor = function (processor) {
     
     //renice child process if applicable, fails silently if things go wrong
     if (processor.options.niceness) {
-        exec('renice -n ' + processor.options.niceness + ' -p ' + process.pid);
+        //TODO: FIXME: exec('renice -n ' + processor.options.niceness + ' -p ' + process.pid);
     }
     
     //set regular expressions for this processor
     processor.regExps = {
             line: /^([^\n]*\n)/
           , audioCodec: /Audio: ([A-Za-z0-9]+),/ //Stream #0.0: Audio: mp3, 44100 Hz, stereo, s16, 186 kb/s
-          , progress: /size=\b*([0-9]+)kB/ //size=      52kB time=00:00:11.43 bitrate=  37.4kbits/s  
+          , progress: /size=[\b]*([0-9]+)kB/ //size=      52kB time=00:00:11.43 bitrate=  37.4kbits/s  
     };
     
     /* parse stdErr, emit appropriate events - parsing logic:
