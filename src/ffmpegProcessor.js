@@ -58,6 +58,7 @@ var executeProcessor = function (processor) {
          *      inputAudioCodec
          *      progress
          */
+        //TODO: implement parsing logic
     });
     
     //listen to process exit event: end stdin and stdout if necessary
