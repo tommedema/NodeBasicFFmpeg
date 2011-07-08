@@ -19,13 +19,8 @@ var genProcArgs = function (processor) {
 
 //generates and returns the options fit for given processor to spawn ffmpeg with
 var genProcOptions = function (processor) {
-    var util = require('util');
-    util.debug('genProcOptions outputStream: ' + util.inspect(processor.options.outputStream));
-    if (!processor.options.outputStream.fd) {
-        util.debug('ERROR: OUTPUTSTREAM FD IS NULL');
-    }
     return  {
-                customFds: [-1, processor.options.outputStream.fd, -1] //we pipe our input stream to stdin, so that ffmpeg will write to our output stream while we control the piping process
+                customFds: [-1, -1, -1] //create new stdin, stdout and stderr file descriptors
             };
 };
 
@@ -137,6 +132,9 @@ var executeProcessor = function (processor) {
             processor.emit('success', exitCode, signal);
         }
     });
+    
+    //pipe stdout to output stream
+    proc.stdout.pipe(processor.options.outputStream);
     
     //start piping input stream to stdin
     processor.options.inputStream.pipe(proc.stdin);
