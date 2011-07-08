@@ -1,7 +1,7 @@
 Node Basic FFmpeg
 ==================
 
-Basic FFmpeg wrapper __for Linux__, see examples. For now, mostly limited for Audio purposes, although it can also be used for video (not tested). Requires ffmpeg to be installed.
+Basic FFmpeg wrapper __for Linux__, see examples. For now, mostly limited to Audio purposes, although it can also be used for video (not tested). __Requires ffmpeg and all dependent codecs to be installed__.
 
 All input should be passed using a readable stream (input stream).
 
