@@ -31,7 +31,7 @@ var processor =
         util.debug('input audio codec is: ' + codec);
     })
     .on('success', function (retcode, signal) {
-        util.debug('process finished with retcode: ' + retcode);
+        util.debug('process finished successfully with retcode: ' + retcode);
     })
     .on('failure', function (retcode, signal) {
         util.debug('the following error occured: ' + err);
