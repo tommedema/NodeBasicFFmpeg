@@ -5,7 +5,7 @@ Basic FFmpeg wrapper __for Linux__, see examples. For now, mostly limited for Au
 
 All input should be passed using a readable stream (input stream).
 
-Full usage example (convert input stream to libvorbis codec and pipe to output stream, set a niceness of 10, inform input audio codec and listen to events. 
+Full usage example (convert input stream to libvorbis codec and pipe to output stream, set niceness and timeout, inform input audio codec and listen to events). 
 ------------------
 
     var ffmpeg = require('basic-ffmpeg'),
