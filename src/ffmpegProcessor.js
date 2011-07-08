@@ -117,6 +117,9 @@ var executeProcessor = function (processor) {
     
     //start piping input stream to stdin
     processor.options.inputStream.pipe(process.stdin);
+    
+    //return processor to allow chaining
+    return processor;
 };
 
 //terminates the given processor, which has options and state
@@ -141,6 +144,9 @@ var terminateProcessor = function (processor, signal) {
     
     //terminate with default signal or custom signal if set
     processor.state.childProcess.kill(signal);
+    
+    //return processor to allow chaining
+    return processor;
 };
 
 //public methods

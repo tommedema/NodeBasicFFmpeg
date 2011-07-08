@@ -27,9 +27,15 @@ var createProcessor = function (options) {
     //add execution and termination methods
     processor.execute = function() {
         ffmpegProcessor.execute(processor);
+        
+        //return processor to allow chaining
+        return processor;
     };
     processor.terminate = function(signal) { //signal is optional
         ffmpegProcessor.terminate(processor, signal);
+        
+        //return processor to allow chaining
+        return processor;
     };
     
     //return this processor
