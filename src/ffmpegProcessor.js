@@ -2,7 +2,14 @@ var spawn = require('child_process').spawn;
 
 //generates and returns the arguments fit for given processor to spawn ffmpeg with
 var genProcArgs = function (processor) {
-    //TODO: genProcArgs
+    var args = ['-i', '-', 'pipe:1']; //make ffmpeg read from stdin, stream data to stdout
+    if (processor.options.arguments) { //add additional arguments
+        for (var argument in processor.options.arguments) {
+            if (processor.options.arguments.hasOwnProperty(argument)) {
+                args.push(argument, processor.options.arguments[argument]);
+            }
+        }
+    }
 };
 
 //generates and returns the options fit for given processor to spawn ffmpeg with
