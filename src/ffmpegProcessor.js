@@ -65,7 +65,9 @@ var terminateProcessor = function (processor, signal) {
     //TODO: terminate piping process (end input stream?)
     
     //check if processor is active, if not we are done already
-    if (!processor.state.childProcess) return;
+    if (!processor.state.childProcess) {
+        return;
+    }
     
     //terminate with default signal or custom signal if set
     processor.state.childProcess.kill(signal);
