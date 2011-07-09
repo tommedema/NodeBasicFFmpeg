@@ -172,5 +172,3 @@ var terminateProcessor = function (processor, signal) {
 //public methods
 exports.execute = executeProcessor;
 exports.terminate = terminateProcessor;
-
-//TODO: fix progress feedback
