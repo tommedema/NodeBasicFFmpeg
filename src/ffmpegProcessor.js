@@ -160,13 +160,10 @@ var terminateProcessor = function (processor, signal) {
     if (processor.options.emitInfoEvent) processor.emit('info', processor.state.tmpStderrOutput);
     processor.state.tmpStderrOutput = '';
     
-    //check if processor is active, if not we are done already
-    if (!processor.state.childProcess) {
-        return;
+    //if processor is active, terminate it with default signal or custom signal if set
+    if (processor.state.childProcess) {
+        processor.state.childProcess.kill(signal); 
     }
-    
-    //terminate with default signal or custom signal if set
-    processor.state.childProcess.kill(signal);
     
     //return processor to allow chaining
     return processor;
