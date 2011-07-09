@@ -57,8 +57,7 @@ Full usage example (convert input stream to libvorbis codec and pipe to output s
  
  __Note 3:__ currently, due to a FFmpeg issue (https://ffmpeg.org/trac/ffmpeg/ticket/337), progress events will not fire.
  
- 
- Other FFmpeg Projects
+  Other FFmpeg Projects
  ----------------------
  
  For your comparison, here is a list of other FFmpeg projects. Some are more excessive in their implementation, some have a different API and documentation while others store all ffmpeg output in memory. You can choose what best fits your preferences.
