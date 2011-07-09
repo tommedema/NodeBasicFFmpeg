@@ -63,8 +63,6 @@ Full usage example (convert input stream to libvorbis codec and pipe to output s
  
  For your comparison, here is a list of other FFmpeg projects. Some are more excessive in their implementation, some have a different API and documentation while others store all ffmpeg output in memory. You can choose what best fits your preferences.
  
-> node-fluent-ffmpeg (https://github.com/schaermu/node-fluent-ffmpeg, author: Schaermu)
-
-> ffmpeg-node (https://github.com/xonecas/ffmpeg-node, author: xonecas)
-
-> node-simple-ffmpeg (https://github.com/scopely/node-simple-ffmpeg, author: hyperlight)
+ * node-fluent-ffmpeg (https://github.com/schaermu/node-fluent-ffmpeg, author: Schaermu)
+ * ffmpeg-node (https://github.com/xonecas/ffmpeg-node, author: xonecas)
+ * node-simple-ffmpeg (https://github.com/scopely/node-simple-ffmpeg, author: hyperlight)
