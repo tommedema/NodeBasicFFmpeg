@@ -24,6 +24,51 @@ var genProcOptions = function (processor) {
             };
 };
 
+//ends input and/or output stream for given processor, if desired
+var endStreamsIfDesired = function (processor) {
+    //end input stream if applicable
+    if (processor.options.endInputStream && processor.options.inputStream) {
+        if (processor.options.inputStream.writable) {
+            processor.options.inputStream.end();
+        }
+        if (processor.options.inputStream && processor.options.inputStream.readable) { //perform another check in case end was instantaneous
+            processor.options.inputStream.destroy();
+        }
+    }
+    
+    //end output stream if applicable
+    if (processor.options.endOutputStream && processor.options.outputStream && processor.options.outputStream.writable) {
+        processor.options.outputStream.end();
+        if (processor.options.outputStream && processor.options.outputStream.writable) { //perform another check in case end was instantaneous
+            processor.options.outputStream.destroy();
+        }
+    }
+};
+
+//terminates the given processor, which has options and state
+var terminateProcessor = function (processor, signal) {    
+    //set default signal if signal is not set
+    if (!signal) signal = 'SIGTERM';
+    
+    //clear timeout timer
+    if (processor.state.timeoutTimer) clearTimeout(processor.state.timeoutTimer);
+    
+    //end streams if desired
+    endStreamsIfDesired(processor);
+    
+    //handle leftover output
+    if (processor.options.emitInfoEvent) processor.emit('info', processor.state.tmpStderrOutput);
+    processor.state.tmpStderrOutput = '';
+    
+    //if processor is active, terminate it with default signal or custom signal if set
+    if (processor.state.childProcess) {
+        processor.state.childProcess.kill(signal); 
+    }
+    
+    //return processor to allow chaining
+    return processor;
+};
+
 //executes the given processor, which has options and state
 var executeProcessor = function (processor) {    
     //check if processor is not already active
@@ -110,29 +155,8 @@ var executeProcessor = function (processor) {
     
     //listen to process exit event: end stdin and stdout if necessary
     proc.on('exit', function(exitCode, signal) {        
-        //clear timeout timer if applicable
-        if (processor.state.timeoutTimer) clearTimeout(processor.state.timeoutTimer);
-        
-        //handle leftover output
-        if (processor.options.emitInfoEvent) processor.emit('info', processor.state.tmpStderrOutput);
-        processor.state.tmpStderrOutput = '';
-        
-        //end input stream if applicable
-        if (processor.options.endInputStream && processor.options.inputStream) {
-            if (processor.options.inputStream.writable) {
-                processor.options.inputStream.end();
-                processor.options.inputStream.destroy();
-            }
-            else if (processor.options.inputStream.readable) {
-                processor.options.inputStream.destroy();
-            }
-        }
-        
-        //end output stream if applicable
-        if (processor.options.endOutputStream && processor.options.outputStream.writable) {
-            processor.options.outputStream.end();
-            processor.options.outputStream.destroy();
-        }
+        //terminate the processor
+        terminateProcessor(processor);
         
         //failure if exitCode is not 0 or signal is set
         if (exitCode !== 0 || signal) {
@@ -152,44 +176,6 @@ var executeProcessor = function (processor) {
     }
     else {
         processor.options.inputStream = proc.stdin;
-    }
-    
-    //return processor to allow chaining
-    return processor;
-};
-
-//terminates the given processor, which has options and state
-var terminateProcessor = function (processor, signal) {    
-    //set default signal if signal is not set
-    if (!signal) signal = 'SIGTERM';
-    
-    //clear timeout timer
-    if (processor.state.timeoutTimer) clearTimeout(processor.state.timeoutTimer);
-    
-    //end input stream if applicable
-    if (processor.options.endInputStream && processor.options.inputStream) {
-        if (processor.options.inputStream.writable) {
-            processor.options.inputStream.end();
-            processor.options.inputStream.destroy();
-        }
-        else if (processor.options.inputStream.readable) {
-            processor.options.inputStream.destroy();
-        }
-    }
-    
-    //end output stream if applicable
-    if (processor.options.endOutputStream && processor.options.outputStream.writable) {
-        processor.options.outputStream.end();
-        processor.options.outputStream.destroy();
-    }
-    
-    //handle leftover output
-    if (processor.options.emitInfoEvent) processor.emit('info', processor.state.tmpStderrOutput);
-    processor.state.tmpStderrOutput = '';
-    
-    //if processor is active, terminate it with default signal or custom signal if set
-    if (processor.state.childProcess) {
-        processor.state.childProcess.kill(signal); 
     }
     
     //return processor to allow chaining
