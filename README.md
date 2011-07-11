@@ -56,6 +56,8 @@ __Note 1:__ both input and output stream will be destroyed when the process term
 __Note 2:__ the reason that the 3 informative events will only emit if their booleans are set to true, is because it requires computational resources to parse this data from stderr. If all three are false, all ffmpeg output can simply be dropped. If informAudioCodec is true, output can be dropped as soon as the codec was found. The other two require constant parsing of ffmpeg output. However, NodeBasicFFmpeg does not store the entire output in memory, instead it parses line by line to reduce the memory footprint.
  
 __Note 3:__ currently, due to a FFmpeg issue (https://ffmpeg.org/trac/ffmpeg/ticket/337), progress events will not fire.
+
+__Note 4:__ inputStream is optional. If it is not provided, a writable input stream will be set as processor.options.inputStream which you can write to.
  
 Other FFmpeg Projects
 ----------------------

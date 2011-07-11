@@ -118,10 +118,21 @@ var executeProcessor = function (processor) {
         processor.state.tmpStderrOutput = '';
         
         //end input stream if applicable
-        if (processor.options.endInputStream && processor.options.inputStream.readable) processor.options.inputStream.destroy();
+        if (processor.options.endInputStream && processor.options.inputStream) {
+            if (processor.options.inputStream.writable) {
+                processor.options.inputStream.end();
+                processor.options.inputStream.destroy();
+            }
+            else if (processor.options.inputStream.readable) {
+                processor.options.inputStream.destroy();
+            }
+        }
         
         //end output stream if applicable
-        if (processor.options.endOutputStream && processor.options.outputStream.writable) processor.options.outputStream.destroy();
+        if (processor.options.endOutputStream && processor.options.outputStream.writable) {
+            processor.options.outputStream.end();
+            processor.options.outputStream.destroy();
+        }
         
         //failure if exitCode is not 0 or signal is set
         if (exitCode !== 0 || signal) {
@@ -135,8 +146,13 @@ var executeProcessor = function (processor) {
     //pipe stdout to output stream
     proc.stdout.pipe(processor.options.outputStream);
     
-    //start piping input stream to stdin
-    processor.options.inputStream.pipe(proc.stdin);
+    //start piping input stream to stdin if set, otherwise set stdin as input stream
+    if (processor.options.inputStream) {
+        processor.options.inputStream.pipe(proc.stdin);
+    }
+    else {
+        processor.options.inputStream = proc.stdin;
+    }
     
     //return processor to allow chaining
     return processor;
@@ -151,10 +167,21 @@ var terminateProcessor = function (processor, signal) {
     if (processor.state.timeoutTimer) clearTimeout(processor.state.timeoutTimer);
     
     //end input stream if applicable
-    if (processor.options.endInputStream && processor.options.inputStream.readable) processor.options.inputStream.destroy();
+    if (processor.options.endInputStream && processor.options.inputStream) {
+        if (processor.options.inputStream.writable) {
+            processor.options.inputStream.end();
+            processor.options.inputStream.destroy();
+        }
+        else if (processor.options.inputStream.readable) {
+            processor.options.inputStream.destroy();
+        }
+    }
     
     //end output stream if applicable
-    if (processor.options.endOutputStream && processor.options.outputStream.writable) processor.options.outputStream.destroy();
+    if (processor.options.endOutputStream && processor.options.outputStream.writable) {
+        processor.options.outputStream.end();
+        processor.options.outputStream.destroy();
+    }
     
     //handle leftover output
     if (processor.options.emitInfoEvent) processor.emit('info', processor.state.tmpStderrOutput);
