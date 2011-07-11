@@ -1,6 +1,6 @@
 {
   "name": "basicFFmpeg",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A basic wrapper for FFMPEG (http://www.ffmpeg.org)",
   "keywords": [ "ffmpeg" ],
   "author": "Tom Medema <tommedema@gmail.com>",
