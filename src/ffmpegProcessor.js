@@ -28,18 +28,20 @@ var genProcOptions = function (processor) {
 var endStreamsIfDesired = function (processor) {
     //end input stream if applicable
     if (processor.options.endInputStream && processor.options.inputStream) {
-        if (processor.options.inputStream.writable) {
+        if (processor.options.inputStream.end) {
             processor.options.inputStream.end();
         }
-        if (processor.options.inputStream && processor.options.inputStream.readable) { //perform another check in case end was instantaneous
+        if (processor.options.inputStream.destroy && processor.options.inputStream.socket) { //perform another check in case end was instantaneous
             processor.options.inputStream.destroy();
         }
     }
     
     //end output stream if applicable
     if (processor.options.endOutputStream && processor.options.outputStream && processor.options.outputStream.writable) {
-        processor.options.outputStream.end();
-        if (processor.options.outputStream && processor.options.outputStream.writable) { //perform another check in case end was instantaneous
+        if (processor.options.outputStream.end) {
+            processor.options.outputStream.end();
+        }
+        if (processor.options.outputStream.destroy && processor.options.outputStream.socket) { //perform another check in case end was instantaneous
             processor.options.outputStream.destroy();
         }
     }
@@ -57,7 +59,7 @@ var terminateProcessor = function (processor, signal) {
     endStreamsIfDesired(processor);
     
     //handle leftover output
-    if (processor.options.emitInfoEvent) processor.emit('info', processor.state.tmpStderrOutput);
+    if (processor.options.emitInfoEvent && processor.state.tmpStderrOutput) processor.emit('info', processor.state.tmpStderrOutput);
     processor.state.tmpStderrOutput = '';
     
     //if processor is active, terminate it with default signal or custom signal if set
