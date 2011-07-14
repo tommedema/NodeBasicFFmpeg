@@ -1,6 +1,6 @@
 {
   "name": "basicFFmpeg",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "A basic wrapper for FFMPEG (http://www.ffmpeg.org)",
   "keywords": [ "ffmpeg" ],
   "author": "Tom Medema <tommedema@gmail.com>",
@@ -8,6 +8,6 @@
       "web": "https://github.com/tommedema/NodeBasicFFmpeg/issues"
   },
   "repository": "git@github.com:tommedema/NodeBasicFFmpeg.git",
-  "engines" : { "node" : ">=0.4.0" },
+  "engines" : { "node" : ">=0.4.9" },
   "main": "./src/basicFFmpeg.js"
 }
