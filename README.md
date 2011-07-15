@@ -10,7 +10,7 @@ Much of this code comes from node-fluent-ffmpeg, created by Schaermu (https://gi
 Full usage example (convert input stream to libvorbis codec and pipe to output stream, set niceness and timeout, inform input audio codec and listen to events). 
 ------------------
 
-(complete version: https://github.com/tommedema/NodeBasicFFmpeg/blob/master/example/audio/main.js)
+(see examples folder for complete version)
 
     var ffmpeg = require('basicFFmpeg'),
         util = require('util');
@@ -57,7 +57,7 @@ __Note 2:__ the reason that the 3 informative events will only emit if their boo
  
 __Note 3:__ currently, due to a FFmpeg issue (https://ffmpeg.org/trac/ffmpeg/ticket/337), progress events will not fire.
 
-__Note 4:__ inputStream is optional. If it is not provided, a writable input stream will be set as processor.options.inputStream which you can write to. When you are done, you must end the input stream, like: ```processor.options.inputStream.end()```.See https://github.com/tommedema/NodeBasicFFmpeg/blob/master/example/audioNoInput/main.js for an example.
+__Note 4:__ inputStream is optional. If it is not provided, a writable input stream will be set as processor.options.inputStream which you can write to. When you are done, you must end the input stream, like: ```processor.options.inputStream.end()```. See the examples folder for an example.
  
 Other FFmpeg Projects
 ----------------------
