@@ -21,6 +21,7 @@ var createProcessor = function (options) {
     processor.state = {
             timeoutTimer: null
           , childProcess: null
+          , inputWriteBufferEmpty: true
           , tmpStderrOutput: ''
           , emitInputAudioCodecEvent: options.emitInputAudioCodecEvent
     };

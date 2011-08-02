@@ -178,25 +178,53 @@ var executeProcessor = function (processor) {
     }
     else {
         processor.options.inputStream = proc.stdin;
+        
+        //wrap write to keep track of write buffer empty state
+        var write = processor.options.inputStream.write;
+        processor.options.inputStream.write = function() {
+            return processor.state.inputWriteBufferEmpty = write.apply(this, arguments);
+        };
+        
+        //update writeBufferEmpty boolean
+        processor.options.inputStream.on('drain', function() {
+            processor.state.inputWriteBufferEmpty = true;
+        });
     }
     
     //return processor to allow chaining
     return processor;
 };
 
-//makes input go directly to output from this point, without ffmpeg conversion
+//makes input go directly to output from this point, without further ffmpeg conversion
+//note that output may not make sense if the converted data does not comply with the input data
 var processorBypass = function(processor) {
     //make input stream pipe directly to output stream
         //if input stream was created (== ffmpeg stdin) then
         if (processor.options.inputStream === processor.state.childProcess.stdin) {
+            //called when write buffer is empty
+            var continueWhenReady = function() {
+                //set inputStream to writeStream
+                processor.options.inputStream = processor.options.outputStream;
+                
+                //handle leftover output
+                if (processor.options.emitInfoEvent && processor.state.tmpStderrOutput) processor.emit('info', processor.state.tmpStderrOutput);
+                processor.state.tmpStderrOutput = '';
+                
+                //terminate ffmpeg
+                if (processor.state.childProcess) {
+                    processor.state.childProcess.kill('SIGTERM'); 
+                }
+            };
+            
             //make sure that write buffer is empty
-            //...
-            
-            //set inputStream to writeStream
-            processor.options.inputStream = processor.options.outputStream;
-            
-            //terminate ffmpeg (including stdin, stdout)
-            //...
+            if (processor.state.inputWriteBufferEmpty) {
+                continueWhenReady();
+            }
+            else {
+                processor.options.inputStream.once('drain', function() {
+                    continueWhenReady();
+                });
+            }
         }
         //if input stream was passed (== readStream) then
         else {
@@ -218,3 +246,4 @@ var processorBypass = function(processor) {
 //public methods
 exports.execute = executeProcessor;
 exports.terminate = terminateProcessor;
+exports.bypass = processorBypass;
