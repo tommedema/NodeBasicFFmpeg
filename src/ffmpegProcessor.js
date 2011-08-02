@@ -185,18 +185,34 @@ var executeProcessor = function (processor) {
 };
 
 //makes input go directly to output from this point, without ffmpeg conversion
-var processorBypass = function() {
+var processorBypass = function(processor) {
     //make input stream pipe directly to output stream
         //if input stream was created (== ffmpeg stdin) then
+        if (processor.options.inputStream === processor.state.childProcess.stdin) {
             //make sure that write buffer is empty
+            //...
+            
             //set inputStream to writeStream
+            processor.options.inputStream = processor.options.outputStream;
+            
             //terminate ffmpeg (including stdin, stdout)
-        
+            //...
+        }
         //if input stream was passed (== readStream) then
+        else {
             //pause input stream
+            processor.options.inputStream.pause();
+            
             //end stdin (stop piping of input stream to stdin)
+            //...
+            
             //close ffmpeg (including stdin, stdout) if it finished writing data (make sure that write buffer is empty)
-            //pipe input stream to output stream
+            //...
+            
+            //pipe input stream to output stream and resume stream
+            processor.options.inputStream.pipe(processor.options.outputStream);
+            processor.options.inputStream.resume();
+        }
 };
 
 //public methods
