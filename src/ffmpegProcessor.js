@@ -47,11 +47,24 @@ var endStreamsIfDesired = function (processor) {
     }
 };
 
-//terminates the given processor, which has options and state
-var terminateProcessor = function (processor, signal) {    
+//terminates the ffmpeg process
+var terminateProcess = function (processor, signal) {
     //set default signal if signal is not set
     if (!signal) signal = 'SIGTERM';
     
+    //if processor is active, terminate it with default signal or custom signal if set
+    if (processor.state.childProcess) {
+        //destroy internal streams
+        processor.state.childProcess.stdin.destroy();
+        processor.state.childProcess.stderr.destroy();
+        processor.state.childProcess.stdout.destroy();
+        //finally send kill signal
+        processor.state.childProcess.kill(signal); 
+    }
+};
+
+//terminates the given processor, which has options and state
+var terminateProcessor = function (processor, signal) {    
     //clear timeout timer
     if (processor.state.timeoutTimer) clearTimeout(processor.state.timeoutTimer);
     
@@ -62,10 +75,8 @@ var terminateProcessor = function (processor, signal) {
     if (processor.options.emitInfoEvent && processor.state.tmpStderrOutput) processor.emit('info', processor.state.tmpStderrOutput);
     processor.state.tmpStderrOutput = '';
     
-    //if processor is active, terminate it with default signal or custom signal if set
-    if (processor.state.childProcess) {
-        processor.state.childProcess.kill(signal); 
-    }
+    //terminate process
+    terminateProcess();
     
     //return processor to allow chaining
     return processor;
