@@ -76,7 +76,7 @@ var terminateProcessor = function (processor, signal) {
     processor.state.tmpStderrOutput = '';
     
     //terminate process
-    terminateProcess();
+    terminateProcess(processor, signal);
     
     //return processor to allow chaining
     return processor;
