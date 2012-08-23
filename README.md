@@ -1,3 +1,4 @@
+[![build status](https://secure.travis-ci.org/tommedema/NodeBasicFFmpeg.png)](http://travis-ci.org/tommedema/NodeBasicFFmpeg)
 Node Basic FFmpeg
 ==================
 
